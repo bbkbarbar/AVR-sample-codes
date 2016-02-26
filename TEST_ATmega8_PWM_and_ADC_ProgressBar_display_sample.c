@@ -1,8 +1,6 @@
 /*
-
-ADC works, can be shown on PORTD "bar-display", but there is an issue with ADC value-range
-
-*/
+ *ADC works, can be shown on PORTD "bar-display", but there is an issue with ADC value-range
+ */
 
 #include <avr/io.h>
 #include <util/delay.h>
@@ -10,7 +8,7 @@ ADC works, can be shown on PORTD "bar-display", but there is an issue with ADC v
 #define	DEFAULT_DELAY 100
 
 #define UP 		1
-#define DOWN 	1
+#define DOWN 	0
 
 
 void wait(unsigned short val) {

@@ -13,11 +13,14 @@ void wait(unsigned short val) {
 
 }
 
+
 void _wait(){
 	_delay_ms(DEFAULT_DELAY);
 }
 
+
 void initPWM3(){
+
 	//====================================================
 	// 				PWM init of OCR2 (maybe)
 	//====================================================
@@ -62,19 +65,19 @@ void initPWM3(){
 	// 				PWM init of OCR1B (maybe)
 	//====================================================
 
-	 // TCCR1B
-	 // Bit                  7     6       5       4      3      2      1      0
-	 // Bit Name           COM1A1 COM1A0 COM1B1 COM1B0  -----  -----  WGM11   WGM10
-	 // Initial Value      0       0       0       0      0      0      0      0
-	 // changed to         1       1       1       1      0      0      1      0
+	// TCCR1B
+	// Bit                  7     6       5       4      3      2      1      0
+	// Bit Name           COM1A1 COM1A0 COM1B1 COM1B0  -----  -----  WGM11   WGM10
+	// Initial Value      0       0       0       0      0      0      0      0
+	// changed to         1       1       1       1      0      0      1      0
 	TCCR1A = 0b11110010;
 
-	 // TCCR1B
-	 // Bit              7     6     5       4       3       2       1       0
-	 // Bit Name      ICNC1  ICES1  -----  WGM13   WGM12   CS12    CS11    CS10
-	 // Initial Value    0     0      0      0       0       0       0       0
-	 // changed to       0     0      0      1       1       1       0       1
-	 // CS12,CS11,CS10 = (0,0,1) System clock, no division
+	// TCCR1B
+	// Bit              7     6     5       4       3       2       1       0
+	// Bit Name      ICNC1  ICES1  -----  WGM13   WGM12   CS12    CS11    CS10
+	// Initial Value    0     0      0      0       0       0       0       0
+	// changed to       0     0      0      1       1       1       0       1
+	// CS12,CS11,CS10 = (0,0,1) System clock, no division
 	TCCR1B = 0b00011010;
 
 	//TCCR1B = 25;// 00011001
@@ -197,14 +200,13 @@ void showByteValueOnBar(unsigned int val){
 
 
 void init(){   // 76543210
-		DDRB  = 0b11111111;
-	  	DDRC  =  0b0000000;
-  	  	DDRD  = 0b11111111;
+	DDRB  = 0b11111111;
+	DDRC  =  0b0000000;
+	DDRD  = 0b11111111;
+
+	PORTC = 0;
+	PORTD = 0x01;
 	  	
-		PORTC = 0;
-	  	PORTD = 0x01;
-	  	
-	  //DDRB = (1<<PB0)|(1<<PB4)|(1<<PB5)|(1<<PB6)|(1<<PB7);
 }
 
 
@@ -251,26 +253,19 @@ int main(){
 	initADC();
 
 	unsigned int value = 0;
-	uint16_t     adc; //////////////////////////////////////
+	uint16_t     adc;
 
 	while(1){
 
 		value = readADC(0);
 		value = (value / 4);
 
-		/*
-		if(value > 255 || value < 0){
-			PORTD = 0;
-			wait(100);
-			continue;
-		}	/**/
 
 		showByteValueOnBar(value);		
 		setPwmByte(0, value/8);
 		setPwmByte(1, value);
 		setPwmByte(2, (255-value));
 
-		//////////////////////////////////////////////////////////////
 		if((value < 165) && (value > 135)){
 			PORTB |= (1<<PINB5);
 	        _delay_ms(1);
@@ -280,8 +275,6 @@ int main(){
 		}else{
 			PORTB &= ~(1<<PINB5);
 		}	
-		//////////////////////////////////////////////////////////////
-		//wait(50);
 
 	}
 
