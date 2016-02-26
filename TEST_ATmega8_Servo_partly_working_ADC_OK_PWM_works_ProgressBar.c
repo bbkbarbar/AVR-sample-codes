@@ -3,8 +3,8 @@
 
 #define	DEFAULT_DELAY 100
 
-#define UP 		1
-#define DOWN 	1
+#define UP		1
+#define DOWN	1
 
 
 void wait(unsigned short val) {
