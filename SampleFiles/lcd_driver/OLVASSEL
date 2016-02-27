@@ -1,0 +1,29 @@
+
+A konyvtarban 2 peldaprogram talalhato: main.c es main2.c amely a
+simple_driver lcd-drivert (simple_driver.c -.h) hasznalja.
+
+A main.c pelda sajat karakterek megjelenitesere es animalasara.
+A main2.c pelda vertical -scroll simulalasra.
+
+Amelyiket hasznalni szeretned, aszerint modositsd a Makefile-ban az 
+'SRC = main.c simple_driver.c' sort a megfelelore.
+Avr-gcc -t hasznalj a forditashoz.
+make all paranccsal fordithatod le,
+make clean paranccsal torlod,
+make program paranccsal beegeted az avr-be.
+
+A simple_driver ATMega8 tipusu avr-en volt tesztelve 8MHz belso oszcilatorral ;
+Az idosztas szamitasanal(main.c,main2.c) eszerint szamoltam!
+
+A driver avrlibc-t hasznal. 
+
+Amire erdemes odafigyelni:
+Ha osszevisszasagok jelennenek meg a kijelzon akkor a kovetkezo hibakat
+ejthetted:
+-nem jol kototted be a labakat(lasd simple_driver.h fileban a megjegyzeseket!)
+
+Mit lehet tenni ha tovabbra sem mukodik?
+-allitsd nagyobb ertekre a lcd_toggle_E() fuggvenyben a delay erteket.
+Lasd megjegyzest a fuggvenyben.
+
+uprog@tvn.hu
