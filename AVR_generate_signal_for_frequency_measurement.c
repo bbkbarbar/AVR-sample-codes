@@ -11,7 +11,6 @@
  */
 void generateOutputForFrequencyMeasurement(double freqencyInHz){
 
-
 	double tCycle = (1 / freqencyInHz) * SEC_IN_US;
 	double tOnInUs  = tCycle * 0.5;
 	double tOffInUs = tOnInUs;
