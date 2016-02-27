@@ -27,20 +27,3 @@ void generateOutputForFrequencyMeasurement(double freqencyInHz){
 	}
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
