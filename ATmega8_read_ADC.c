@@ -12,7 +12,7 @@
  *                                                                    *
  *                      Boor Andras - 2014                            *
  *                                                                    *
- *    https://www.youtube.com/watch?v=1EOWUTbraFo                                                                *
+ *    https://www.youtube.com/watch?v=1EOWUTbraFo                     *
  *********************************************************************/
 
 #define F_CPU 1000000

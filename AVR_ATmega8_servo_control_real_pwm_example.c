@@ -1,6 +1,18 @@
 //-------------------------
 #include <avr\io.h>
+#include <avr\delay.h>
 
+/**********************************************************************
+ *    Control servo with standard PWM output on OCR1A (PB1)           *
+ *    Device: ATmega8                                                 *
+ *                                                                    *
+ *    Value range for control servo (values for OCR1A):               *
+ *         MIN:                                                       *
+ *         MAX:                                                       *
+ *                                                                    *
+ *                      Boor Andras - 2016                            *
+ *                                                                    *
+ *********************************************************************/
 
 int main(void) {
 
@@ -25,18 +37,17 @@ int main(void) {
 	TCCR1B|=(0<<ICNC1)|(0<<ICES1)|(1<<WGM13)|(1<<WGM12)|
 	(0<<CS12)|(1<<CS11)|(0<<CS10);
 	//start timer with prescaler 8
-	
+
+	unsigned int val = 10;	
+
 	for (;;) {
-		if(bit_is_clear(PIND, 0)){
-			//increase duty cycle
-			OCR1A+=10;
-			loop_until_bit_is_set(PIND, 0);
+		_delay_ms(100);
+		if(val < 2000){
+			OCR1A = val;
+		}else{
+			val = 0;
 		}
-		if(bit_is_clear(PIND, 1)) {
-			//decease duty cycle
-			OCR1A-=10;
-			loop_until_bit_is_set(PIND, 1);
-		}
+		val+=10;
 	}
 }
 //----------------------------------
