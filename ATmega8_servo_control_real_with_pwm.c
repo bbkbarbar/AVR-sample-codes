@@ -16,7 +16,6 @@
  *********************************************************************/
 
 #include <avr\io.h>
-#include <util\delay.h>
 
 #define SERVO_OUTPUT_MIN 	 450
 #define SERVO_OUTPUT_MAX 	2400
@@ -45,21 +44,6 @@ void initServoControl(){
 	(0<<CS12) | (1<<CS11) | (0<<CS10);
 }
 
-void setServoPosition(unsigned int position){
+void setServoPosition(unsigned short position){
 	OCR1A = position;
-}
-
-int main(void) {
-
-	initServoControl();
-
-	//setServoPosition(SERVO_LEFT);	
-	//setServoPosition(SERVO_MID);	
-	setServoPosition(SERVO_RIGHT);	
-
-	for (;;) {
-		_delay_ms(100);
-	}
-
-	return 0;
 }
