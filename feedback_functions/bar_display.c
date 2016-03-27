@@ -65,9 +65,6 @@ unsigned char getValueToShowPosition(float val, int max){
     if( bar < 4.5 ){
         res = 0b1000;       
     }else
-    if( bar > 4.8 && bar < 5.2 ){
-        res = 0b11000;       
-    }else
     if( bar < 5.5 ){
         res = 0b10000;
     }else
