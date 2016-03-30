@@ -25,6 +25,14 @@
 #define SERVO_RIGHT			SERVO_OUTPUT_MIN
 #define SERVO_MID 			1460
 
+#ifdef SERVO_CONTROL_FINE
+ 	#include <util/delay.h>
+ 	#define DELAY_INCLUDED
+	#define FINE_ROTATION_DELAY      10
+	unsigned short lastServoPosition;
+	unsigned short FINE_THRESHOLD = 100;
+	unsigned short rotation_step =   20;
+#endif
 
 void initServoControl(){
 	//Output pin set for PWM output
@@ -46,8 +54,30 @@ void initServoControl(){
 
 void setServoPosition(unsigned short position){
 	OCR1A = position;
+	#ifdef SERVO_CONTROL_FINE
+		lastServoPosition = position;
+	#endif
 }
 
-unsigned short getServoPosition(){
-	return OCR1A;
+#ifdef SERVO_CONTROL_FINE
+
+unsigned short abs(short a){
+	return (a > 0)?a:(-1*a);
 }
+
+void setServoPositionFine(unsigned short wantedPosition){
+	if(OCR1A > wantedPosition){
+		if(OCR1A - wantedPosition > FINE_THRESHOLD){
+			OCR1A = (OCR1A - rotation_step);
+			for(int i=0; i< FINE_ROTATION_DELAY; i++){
+				_delay_ms(1);
+			}
+			setServoPositionFine(wantedPosition);
+		}else{
+			
+		}
+	}
+	OCR1A = positionToSet;
+	lastServoPosition = wantedPosition;
+}
+#endif

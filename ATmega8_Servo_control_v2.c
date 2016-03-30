@@ -25,6 +25,9 @@
 #define SERVO_RIGHT			SERVO_OUTPUT_MIN
 #define SERVO_MID 			1460
 
+#ifdef SERVO_CONTROL_FINE
+	unsigned short lastServoPosition;
+#endif
 
 void initServoControl(){
 	//Output pin set for PWM output
@@ -46,8 +49,17 @@ void initServoControl(){
 
 void setServoPosition(unsigned short position){
 	OCR1A = position;
+	#ifdef SERVO_CONTROL_FINE
+		lastServoPosition = position;
+	#endif
 }
 
-unsigned short getServoPosition(){
-	return OCR1A;
+#ifdef SERVO_CONTROL_FINE
+void setServoPositionFine(unsigned short wantedPosition){
+	if(wantedPosition){
+		
+	}
+	OCR1A = wantedPosition;
+	lastServoPosition = wantedPosition;
 }
+#endif
