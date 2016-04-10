@@ -25,6 +25,7 @@ void initADC() {
     //        76543210
     DDRC &= 0b11000000;
 
+    PORTC = 0;
     //         76543210
     ADMUX  = 0b01000000;
     ADCSRA = 0b10000111;
