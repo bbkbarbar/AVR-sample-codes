@@ -12,6 +12,19 @@
 
 //#define F_CPU 1000000
 
+// ======================================================================================================
+// |                                           Configurations                                           |
+// ======================================================================================================
+
+#define USED_DIGITS					4
+
+#define REPLACE_ZERO_FROM_BEGIN		1
+
+
+// ======================================================================================================
+// |                                          Macro definitions                                         |
+// ======================================================================================================
+
 //TODO: need?
 #include <avr/io.h>
 
@@ -66,7 +79,6 @@
 
 #define NONE						0
 
-#define USED_DIGITS					4
 
 
 // Used to store states of segments in one variable
@@ -263,26 +275,63 @@ void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits
 	 //TODO: Try it out (in paper too) with values: 456, 78, 1, 0
 	if((value <= 9999) && (value >= 0)){
 
-		tmp = tmp/10; // 567
+		tmp = tmp/10; // 7
 		segmentPatterns[3] = getSegmentValueForChar( (value - (tmp*10)) + '0'); // '8'
-		value /= 10; // 567 (tmp = 567 too)
+		value /= 10; // 7 (tmp = 7 too)
 
-		tmp = tmp/10; // 56
+		tmp = tmp/10; // 0
 		segmentPatterns[2] = getSegmentValueForChar( (value - (tmp*10)) + '0'); // '7'
 		value /= 10; // 56 (tmp = 56 too)
 
 		tmp = tmp/10; // 5
-		segmentPatterns[1] = getSegmentValueForChar( (value - (tmp*10)) + '0'); // '6'
+		segmentPatterns[1] = getSegmentValueForChar( (value - (tmp*10)) + '0'); // '0'
 		value /= 10; // 5 
 
-		segmentPatterns[0] = getSegmentValueForChar(  value             + '0'); // '5'
+		segmentPatterns[0] = getSegmentValueForChar(  value             + '0'); // '0'
 
 		//segmentPatterns = {'5', '6', '7', '8'}
+
 	}else
 	if(value > 9999){
 		segmentPatterns = {'T', 'T', 'T', 'T'};
 	}else{
 		segmentPatterns = {'_', '_', '_', '_'};
+	}
+
+
+	#ifndef REPLACE_ZERO_FROM_BEGIN
+		if(REPLACE_ZERO_FROM_BEGIN > 0){
+
+			uint8_t tmpCounter = 0;
+			while( (tmpCounter < 3) && (segmentPatterns[tmpCounter] == '0') ){
+				segmentPatterns[tmpCounter] = ' ';
+				tmpCounter++;
+			}
+
+		}
+	#endif
+
+
+	/*
+	 *  Segment value stored 
+	 *  (if needed then 0-s from the begin replaced with ' ').
+	 *  Start to show..
+	 */
+	uint8_t i;
+	uint8_t currDigit = 0;
+	
+	for( i = 0; i < frameCount; i++ ){
+		for( currDigit = 0; currDigit < USED_DIGITS; currDigit++ ){
+
+			if( segmentPatterns[currDigit] == 0){
+				continue;
+			}
+			enableDigit( NONE );
+			enableSegments( segmentPatterns[currDigit] )
+			enableDigit( currDigit + 1 );
+			wait(delayBetweenDigits);
+
+		}
 	}
 
 }
