@@ -18,7 +18,8 @@
 
 #define USED_DIGITS					4
 
-#define REPLACE_ZERO_FROM_BEGIN		1
+// removed h
+//#define REPLACE_ZERO_FROM_BEGIN		1
 
 
 // ======================================================================================================
@@ -27,18 +28,18 @@
 
 //TODO: need?
 #include <avr/io.h>
+#include "led_display_4x7.h"
 
 #ifndef DELAY_INCLUDED
     #include <util/delay.h>
     #define DELAY_INCLUDED
 #endif
 
+/*
 #ifndef PORTS_FOR_LED_DISPLAY_ARE_DEFINED
 
- 	/*
- 	 * Define PORTs and PINs 
- 	 * for using LED display @ 4 digits
- 	 */
+ 	// Define PORTs and PINs 
+ 	// for using LED display @ 4 digits
 
 	#define PORT_OF_SEGM_A			PORTD
 	#define PORT_OF_SEGM_B			PORTD
@@ -73,11 +74,19 @@
 
  	#define PORTS_FOR_LED_DISPLAY_ARE_DEFINED
  #endif
+*/
 
+#ifndef PORTS_FOR_LED_DISPLAY_ARE_DEFINED
+	#define PORT_OF_SEGM_DOT		PORT_OF_SEGM_H
+	#define PIN_OF_SEGM_DOT			PIN_OF_SEGM_H
+#endif
 
 #define SET_VALUE(port, pin, value)	 	( ((value) > 0)?( port |= (1 << pin) ):(port &= ~(1 << pin)) )
 
-#define NONE						0
+#define NONE				0
+
+#define NO_DOT 				0
+#define DOT_NEEDED			1
 
 
 
@@ -97,7 +106,7 @@ void wait(unsigned short val) {
 
 
 // ======================================================================================================
-// |                                           Basic methods                                            |
+// |                                          Private methods                                           |
 // ======================================================================================================
 
 // Enable outputs for given segments
@@ -246,33 +255,29 @@ uint8_t getSegmentValueForChar(char c){
 
 }
 
+/*
 uint8_t setDotAfter(uint8_t sValue, uint8_t dotEnabled){
 	uint8_t result = sValue;
 	//                                       AB.....H                 AB.....H
 	return ( (dotEnabled > 0) ? (result |= 0b00000001) : (result &= 0b11111110) );
+} 
+*/
 
+void setDotAfter(uint8_t* pSegmentValue, uint8_t dotEnabled){
+	if(dotEnabled > 0){
+		//                  AB.....H
+		*pSegmentValue |= 0b00000001;
+	}else{
+		//                  AB.....H
+		*pSegmentValue &= 0b11111110;
+	}
 }
 
 
-// ======================================================================================================
-// |                                          Useful methods                                            |
-// ======================================================================================================
-
-// Show given numberic value in a 4 digits display
-// for given frameCount
-// for given length of frames for digits
-// e.g.:                    5678
-void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits){
-
-	uint16_t tmp = value;
-	uint16_t digitVal = 0;
+uint8_t* getSegmentPatternArray(uint16_t value){
 
 	uint8_t segmentPatterns[USED_DIGITS];
 
-	/*
-	 *  Determine the appropriate characters for each segment
-	 */
-	 //TODO: Try it out (in paper too) with values: 456, 78, 1, 0
 	if((value <= 9999) && (value >= 0)){
 
 		tmp = tmp/10; // 7
@@ -298,6 +303,53 @@ void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits
 		segmentPatterns = {'_', '_', '_', '_'};
 	}
 
+	return &segmentPatterns;
+}
+
+
+void showSegmentPattern(segmentPatterns* segments, uint8_t frameCount, uint8_t delayBetweenDigits){
+
+	uint8_t frame;
+	uint8_t currDigit = 0;
+	
+	for( frame = 0; frame < frameCount; frame++ ){
+		for( currDigit = 0; currDigit < USED_DIGITS; currDigit++ ){
+
+			if( segmentPatterns[currDigit] == 0){
+				continue;
+			}
+			enableDigit( NONE );
+			enableSegments( segmentPatterns[currDigit] )
+			enableDigit( currDigit + 1 );
+			wait(delayBetweenDigits);
+
+		}
+	}
+
+}
+
+
+// ======================================================================================================
+// |                                          Useful methods                                            |
+// ======================================================================================================
+
+// Show given numberic value in a 4 digits display
+// for given frameCount
+// for given length of frames for digits
+// e.g.:                    5678
+void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter){
+
+	uint16_t tmp = value;
+	uint16_t digitVal = 0;
+
+	uint8_t segmentPatterns[USED_DIGITS];
+
+	/*
+	 *  Determine the appropriate characters for each segment
+	 */
+	 //TODO: Try it out (in paper too) with values: 456, 78, 1, 0
+	*segmentPatterns = getSegmentPatternArray(value);
+
 
 	#ifndef REPLACE_ZERO_FROM_BEGIN
 		if(REPLACE_ZERO_FROM_BEGIN > 0){
@@ -312,26 +364,64 @@ void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits
 	#endif
 
 
+	if(needToShowDotAfterLastCharacter){
+		setDotAfter( &(segmentPatterns[USED_DIGITS-1]), DOT_NEEDED);
+	}
+
+
 	/*
 	 *  Segment value stored 
 	 *  (if needed then 0-s from the begin replaced with ' ').
 	 *  Start to show..
 	 */
-	uint8_t i;
-	uint8_t currDigit = 0;
+	showSegmentPattern(segmentPatterns, frameCount, delayBetweenDigits);
+
+}
+
+
+// ======================================================================================================
+// |                                         "Public" methods                                           |
+// ======================================================================================================
+
+
+void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits){
+	showIntValue(value, frameCount, delayBetweenDigits, NO_DOT);
+}
+
+
+void showFloatValue(float value, uint8_t frameCount, uint8_t delayBetweenDigits){
 	
-	for( i = 0; i < frameCount; i++ ){
-		for( currDigit = 0; currDigit < USED_DIGITS; currDigit++ ){
+	if( value >= 1000.0f ){ // there is no place to show decimals
+		showIntValue((uint16_t)value, frameCount, delayBetweenDigits, DOT_NEEDED);
+		return;
+	}
 
-			if( segmentPatterns[currDigit] == 0){
-				continue;
-			}
-			enableDigit( NONE );
-			enableSegments( segmentPatterns[currDigit] )
-			enableDigit( currDigit + 1 );
-			wait(delayBetweenDigits);
+	uint8_t segmentPatterns[USED_DIGITS]; 
 
-		}
+
+	if( value >=  100.0f ){ // 100,0 .. 999,9 -> 1 decimal place
+		// *= 10
+		*segmentPatterns = getSegmentPatternArray( (value * 10) );
+		setDotAfter( &(segmentPatterns[2]), DOT_NEEDED);
+
+	}else
+	if( value >=   10.0f ){ //  10,0 ..  99,99 -> 2 decimal place
+		// *= 100              ->        9999
+		*segmentPatterns = getSegmentPatternArray( (value * 100) );
+		setDotAfter( &(segmentPatterns[1]), DOT_NEEDED);
+
+	}else
+	if( value >=    1.0f ){ //   1,0 ..   9,999 -> 3 decimal place
+		// *= 1000             ->         9999
+		*segmentPatterns = getSegmentPatternArray( (value * 1000) );
+		setDotAfter( &(segmentPatterns[0]), DOT_NEEDED);
+
+	}else
+	if( (value > 0.0f) && (value < 1.0f) ){ //  -> 3 decimal place, starts with 0
+		//                       0,512  * 1000 => 0512 => _512
+		*segmentPatterns = getSegmentPatternArray( (value * 1000) );  // "0512" 
+		//segmentPatterns[0] = getSegmentValueForChar('0');           
+		setDotAfter( &(segmentPatterns[0]), DOT_NEEDED);              // "0.512"
 	}
 
 }
