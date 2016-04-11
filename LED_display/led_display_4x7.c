@@ -15,6 +15,11 @@
 //TODO: need?
 #include <avr/io.h>
 
+#ifndef DELAY_INCLUDED
+    #include <util/delay.h>
+    #define DELAY_INCLUDED
+#endif
+
 #ifndef PORTS_FOR_LED_DISPLAY_ARE_DEFINED
 
  	/*
@@ -68,6 +73,20 @@
 //                       ABCDEFGH             
 uint8_t segmentValue = 0b00000000;
 
+
+
+// ======================================================================================================
+// |                                          Common methods                                            |
+// ======================================================================================================
+
+void wait(unsigned short val) {
+    while(val--) _delay_ms(1);
+}
+
+
+// ======================================================================================================
+// |                                           Basic methods                                            |
+// ======================================================================================================
 
 // Enable outputs for given segments
 void enableSegments(uint8_t value){ //e.g.: 0b01000010 //B+G
@@ -197,6 +216,9 @@ uint8_t getSegmentValueForChar(char c){
 		case 'P' :
 			//       ABCDEFGH
 			return 0b11001110;
+		case 'T' :
+			//       ABCDEFGH
+			return 0b10000000;
 		case '.' :
 		case ',' :
 			//       ABCDEFGH
@@ -212,4 +234,55 @@ uint8_t getSegmentValueForChar(char c){
 
 }
 
+uint8_t setDotAfter(uint8_t sValue, uint8_t dotEnabled){
+	uint8_t result = sValue;
+	//                                       AB.....H                 AB.....H
+	return ( (dotEnabled > 0) ? (result |= 0b00000001) : (result &= 0b11111110) );
 
+}
+
+
+// ======================================================================================================
+// |                                          Useful methods                                            |
+// ======================================================================================================
+
+// Show given numberic value in a 4 digits display
+// for given frameCount
+// for given length of frames for digits
+// e.g.:                    5678
+void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits){
+
+	uint16_t tmp = value;
+	uint16_t digitVal = 0;
+
+	uint8_t segmentPatterns[USED_DIGITS];
+
+	/*
+	 *  Determine the appropriate characters for each segment
+	 */
+	 //TODO: Try it out (in paper too) with values: 456, 78, 1, 0
+	if((value <= 9999) && (value >= 0)){
+
+		tmp = tmp/10; // 567
+		segmentPatterns[3] = getSegmentValueForChar( (value - (tmp*10)) + '0'); // '8'
+		value /= 10; // 567 (tmp = 567 too)
+
+		tmp = tmp/10; // 56
+		segmentPatterns[2] = getSegmentValueForChar( (value - (tmp*10)) + '0'); // '7'
+		value /= 10; // 56 (tmp = 56 too)
+
+		tmp = tmp/10; // 5
+		segmentPatterns[1] = getSegmentValueForChar( (value - (tmp*10)) + '0'); // '6'
+		value /= 10; // 5 
+
+		segmentPatterns[0] = getSegmentValueForChar(  value             + '0'); // '5'
+
+		//segmentPatterns = {'5', '6', '7', '8'}
+	}else
+	if(value > 9999){
+		segmentPatterns = {'T', 'T', 'T', 'T'};
+	}else{
+		segmentPatterns = {'_', '_', '_', '_'};
+	}
+
+}
