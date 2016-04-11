@@ -57,7 +57,11 @@
  #endif
 
 
-#define SET_VALUE(port, pin, value)	 	( (value>0)?( port |= (1<<pin) ):(port &= ~(1<<pin)) )
+#define SET_VALUE(port, pin, value)	 	( ((value) > 0)?( port |= (1 << pin) ):(port &= ~(1 << pin)) )
+
+#define NONE						0
+
+#define USED_DIGITS					4
 
 
 // Used to store states of segments in one variable
@@ -65,7 +69,8 @@
 uint8_t segmentValue = 0b00000000;
 
 
-void setSegments(uint8_t value){ //e.g.: 0b01000010 //B+G
+// Enable outputs for given segments
+void enableSegments(uint8_t value){ //e.g.: 0b01000010 //B+G
     
     //                                                  A	
     SET_VALUE(PORT_OF_SEGM_A, PIN_OF_SEGM_A, (value & 0b10000000) );
@@ -85,4 +90,126 @@ void setSegments(uint8_t value){ //e.g.: 0b01000010 //B+G
     SET_VALUE(PORT_OF_SEGM_H, PIN_OF_SEGM_H, (value & 0b00000001) );
 
 }
- 
+
+// Enable output for given digit
+void enableDigit(uint8_t digit){
+
+	if(digit <= USED_DIGITS ){
+
+		SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, 0 );
+		SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, 0 );
+		SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, 0 );
+		SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, 0 );
+
+		switch(digit) {
+
+			case NONE :
+				return;
+
+			case 1 :
+				SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, 1 );
+				return;
+
+			case 2 :
+				SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, 1 );
+				return;
+
+			case 3 :
+				SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, 1 );
+				return;
+
+			case 4 :
+				SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, 1 );
+				return;
+		}
+
+	}else{
+		/*
+		 * In other cases show the roblem with using all digit in same time.
+		 */
+		SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, 1 );
+		SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, 1 );
+		SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, 1 );
+		SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, 1 );
+	}
+
+}
+
+// Returns a "segmentValue" for given charachter
+uint8_t getSegmentValueForChar(char c){
+
+	//   ABCDEFGH
+	// 0b00000000;
+
+	switch (c) {
+		case '0' :
+		case 'O' :
+			//       ABCDEFGH
+			return 0b11111100;
+		case '1' :
+			//       ABCDEFGH
+			return 0b01100000;
+		case '2' :
+			//       ABCDEFGH
+			return 0b11011010;
+		case '3' :
+			//       ABCDEFGH
+			return 0b11110010;
+		case '4' :
+			//       ABCDEFGH
+			return 0b01100110;
+		case '5' :
+			//       ABCDEFGH
+			return 0b10110110;
+		case '6' :
+			//       ABCDEFGH
+			return 0b10111110;
+		case '7' :
+			//       ABCDEFGH
+			return 0b11100000;
+		case '8' :
+			//       ABCDEFGH
+			return 0b11111110;
+		case '9' :
+			//       ABCDEFGH
+			return 0b11110110;
+		case '_' :
+			//       ABCDEFGH
+			return 0b00010000;
+		case '-' :
+			//       ABCDEFGH
+			return 0b00000010;
+		case '|' :
+			//       ABCDEFGH
+			return 0b00001100;
+		case 'o' :
+			//       ABCDEFGH
+			return 0b00111010;
+		case 'H' :
+			//       ABCDEFGH
+			return 0b01101110;
+		case 'L' :
+			//       ABCDEFGH
+			return 0b00011100;
+		case 'E' :
+			//       ABCDEFGH
+			return 0b10011110;
+		case 'P' :
+			//       ABCDEFGH
+			return 0b11001110;
+		case '.' :
+		case ',' :
+			//       ABCDEFGH
+			return 0b00000001;
+		case ' ' :
+			//       ABCDEFGH
+			return 0b00000000;
+	}
+
+	//default
+	//       ABCDEFGH
+	return 0b11000100;
+
+}
+
+
