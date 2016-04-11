@@ -277,6 +277,7 @@ void setDotAfter(uint8_t* pSegmentValue, uint8_t dotEnabled){
 uint8_t* getSegmentPatternArray(uint16_t value){
 
 	uint8_t segmentPatterns[USED_DIGITS];
+	uint16_t tmp = 0;
 
 	if((value <= 9999) && (value >= 0)){
 
@@ -298,16 +299,22 @@ uint8_t* getSegmentPatternArray(uint16_t value){
 
 	}else
 	if(value > 9999){
-		segmentPatterns = {'T', 'T', 'T', 'T'};
+		segmentPatterns[0] = 'T';
+		segmentPatterns[1] = 'T';
+		segmentPatterns[2] = 'T';
+		segmentPatterns[3] = 'T';
 	}else{
-		segmentPatterns = {'_', '_', '_', '_'};
+		segmentPatterns[0] = '_';
+		segmentPatterns[1] = '_';
+		segmentPatterns[2] = '_';
+		segmentPatterns[3] = '_';
 	}
 
 	return &segmentPatterns;
 }
 
 
-void showSegmentPattern(segmentPatterns* segments, uint8_t frameCount, uint8_t delayBetweenDigits){
+void showSegmentPattern(uint8_t* segmentPatterns, uint8_t frameCount, uint8_t delayBetweenDigits){
 
 	uint8_t frame;
 	uint8_t currDigit = 0;
@@ -319,7 +326,7 @@ void showSegmentPattern(segmentPatterns* segments, uint8_t frameCount, uint8_t d
 				continue;
 			}
 			enableDigit( NONE );
-			enableSegments( segmentPatterns[currDigit] )
+			enableSegments( segmentPatterns[currDigit] );
 			enableDigit( currDigit + 1 );
 			wait(delayBetweenDigits);
 
@@ -337,7 +344,7 @@ void showSegmentPattern(segmentPatterns* segments, uint8_t frameCount, uint8_t d
 // for given frameCount
 // for given length of frames for digits
 // e.g.:                    5678
-void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter){
+void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter){
 
 	uint16_t tmp = value;
 	uint16_t digitVal = 0;
@@ -385,14 +392,14 @@ void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits
 
 
 void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits){
-	showIntValue(value, frameCount, delayBetweenDigits, NO_DOT);
+	showIntValueWithDot(value, frameCount, delayBetweenDigits, NO_DOT);
 }
 
 
 void showFloatValue(float value, uint8_t frameCount, uint8_t delayBetweenDigits){
 	
 	if( value >= 1000.0f ){ // there is no place to show decimals
-		showIntValue((uint16_t)value, frameCount, delayBetweenDigits, DOT_NEEDED);
+		showIntValueWithDot((uint16_t)value, frameCount, delayBetweenDigits, DOT_NEEDED);
 		return;
 	}
 

@@ -104,7 +104,7 @@ uint8_t* getSegmentPatternArray(uint16_t value);
 /* 
  *  Shows segments according to the given segmentPattern array
  */
-void showSegmentPattern(segmentPatterns* segments, uint8_t frameCount, uint8_t delayBetweenDigits);
+void showSegmentPattern(uint8_t* segmentPatterns, uint8_t frameCount, uint8_t delayBetweenDigits);
 
 /*
  *  Show given numberic value in a 4 digits display
@@ -113,7 +113,7 @@ void showSegmentPattern(segmentPatterns* segments, uint8_t frameCount, uint8_t d
  *  It can 
  */
 // e.g.:                    5678
-void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter);
+void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter);
 
 
 // ======================================================================================================
