@@ -67,21 +67,21 @@ uint8_t segmentValue = 0b00000000;
 
 void setSegments(uint8_t value){ //e.g.: 0b01000010 //B+G
     
-    //													A	
+    //                                                  A	
     SET_VALUE(PORT_OF_SEGM_A, PIN_OF_SEGM_A, (value & 0b10000000) );
-    //													 B	
+    //                                                   B	
     SET_VALUE(PORT_OF_SEGM_B, PIN_OF_SEGM_B, (value & 0b01000000) );
-    //													  C	
+    //                                                    C	
     SET_VALUE(PORT_OF_SEGM_C, PIN_OF_SEGM_C, (value & 0b00100000) );
-    //													   D
+    //                                                     D
     SET_VALUE(PORT_OF_SEGM_D, PIN_OF_SEGM_D, (value & 0b00010000) );
-    //														E
+    //                                                      E
     SET_VALUE(PORT_OF_SEGM_E, PIN_OF_SEGM_E, (value & 0b00001000) );
-    //														 F
+    //                                                       F
     SET_VALUE(PORT_OF_SEGM_F, PIN_OF_SEGM_F, (value & 0b00000100) );
-    //														  G
+    //                                                        G
     SET_VALUE(PORT_OF_SEGM_G, PIN_OF_SEGM_G, (value & 0b00000010) );
-    //														   H
+    //                                                         H
     SET_VALUE(PORT_OF_SEGM_H, PIN_OF_SEGM_H, (value & 0b00000001) );
 
 }
