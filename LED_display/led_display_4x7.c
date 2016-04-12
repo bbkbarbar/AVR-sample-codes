@@ -84,6 +84,7 @@
 #define SET_VALUE(port, pin, value)	 	( ((value) > 0)?( port |= (1 << pin) ):(port &= ~(1 << pin)) )
 
 #define NONE				0
+#define ALL					0xFF
 
 #define NO_DOT 				0
 #define DOT_NEEDED			1
@@ -382,6 +383,64 @@ void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetwee
 	 *  Start to show..
 	 */
 	showSegmentPattern(segmentPatterns, frameCount, delayBetweenDigits);
+
+}
+
+
+/*
+ *  This function made to findSegment correct configuration of segments.
+ *  Examples: 
+ *       findSegment('A', 0b1111);
+ *       findSegment('.', 0b0100);
+ */
+void findSegment(char c, uint8_t digits){
+		
+	enableSegments(NONE);
+
+	SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, (digits & 0b0001) );
+	SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, (digits & 0b0010) );
+	SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, (digits & 0b0100) );
+	SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, (digits & 0b1000) );
+
+
+	switch (c) {
+		case 'A' :
+		case 'a' :
+		    SET_VALUE(PORT_OF_SEGM_A, PIN_OF_SEGM_A, 1 );
+			break;
+		case 'B' :
+		case 'b' :
+		    SET_VALUE(PORT_OF_SEGM_B, PIN_OF_SEGM_B, 1 );
+			break;
+		case 'C' :
+		case 'c' :
+		    SET_VALUE(PORT_OF_SEGM_C, PIN_OF_SEGM_C, 1 );
+			break;
+		case 'D' :
+		case 'd' :
+		    SET_VALUE(PORT_OF_SEGM_D, PIN_OF_SEGM_D, 1 );
+			break;
+		case 'E' :
+		case 'e' :
+		    SET_VALUE(PORT_OF_SEGM_E, PIN_OF_SEGM_E, 1 );
+			break;
+		case 'F' :
+		case 'f' :
+		    SET_VALUE(PORT_OF_SEGM_F, PIN_OF_SEGM_F, 1 );
+			break;
+		case 'G' :
+		case 'g' :
+		    SET_VALUE(PORT_OF_SEGM_G, PIN_OF_SEGM_G, 1 );
+			break;
+		case 'H' :
+		case 'h' :
+		case '.' :
+		case ',' :
+		    SET_VALUE(PORT_OF_SEGM_H, PIN_OF_SEGM_H, 1 );
+			break;
+		default:
+			enableSegments(ALL);
+	}
 
 }
 
