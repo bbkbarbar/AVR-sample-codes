@@ -84,7 +84,7 @@
 #define SET_VALUE(port, pin, value)	 	( ((value) > 0)?( port |= (1 << pin) ):(port &= ~(1 << pin)) )
 
 #define NONE				0
-#define ALL					0xFF
+#define ALL_SEGMENTS					0xFF
 
 #define NO_DOT 				0
 #define DOT_NEEDED			1
@@ -439,7 +439,7 @@ void findSegment(char c, uint8_t digits){
 		    SET_VALUE(PORT_OF_SEGM_H, PIN_OF_SEGM_H, 1 );
 			break;
 		default:
-			enableSegments(ALL);
+			enableSegments(ALL_SEGMENTS);
 	}
 
 }
