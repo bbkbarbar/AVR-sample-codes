@@ -115,6 +115,13 @@ void showSegmentPattern(uint8_t* segmentPatterns, uint8_t frameCount, uint8_t de
 // e.g.:                    5678
 void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter);
 
+/*
+ *  This function made to findSegment correct configuration of segments.
+ *  Examples: 
+ *       findSegment('A', 0b1111);
+ *       findSegment('.', 0b0100);
+ */
+void findSegment(char c, uint8_t digits);
 
 // ======================================================================================================
 // |                                         "Public" methods                                           |
