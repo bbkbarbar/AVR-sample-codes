@@ -393,7 +393,7 @@ void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetwee
  *       findSegment('A', 0b1111);
  *       findSegment('.', 0b0100);
  */
-void findSegment(char c, uint8_t digits){
+void showSegmentForTest(char c, uint8_t digits){
 		
 	enableSegments(NONE);
 
