@@ -2,7 +2,7 @@
  *    Driver for 7+1 segment LED display @ 4 digits                   *
  *    Device: Custom, [4x7 base panel suggested]                      *
  *                                                                    *
- *    Tested with .............                                       *
+ *    Tested with ...                                                 *
  *      + ___ - OK?                                                   *
  *                                                                    *
  *                         Boor Andras - 2016                         *
