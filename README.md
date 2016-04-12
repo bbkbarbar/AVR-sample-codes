@@ -1,10 +1,10 @@
 # AVR-sample-codes
 
-| Function                     | Target MCU | Sample available      | Tested  |
-| :--------------------------- | :--------- | :-------------------: | :-----: |
-| ADC usage                    | ATmega8    | Yes                   | OK      |
-|                              | ATtiny45   | Implemented in sample | ??      |
-| Button read state            | ATmega8    | Implemented in sample | OK      |
-| LED display (7+1 in 4 digit) | ATmega8    | Yes                   | Not yet |
-| PWM rgb-led control          | ATmega8    | Yes                   | OK      |
-| Servo control                | ATmega8    | Yes                   | OK      |
+| Function                     | Target MCU | Sample available      | Tested  | Link
+| :--------------------------- | :--------- | :-------------------: | :-----: | :--
+| ADC usage                    | ATmega8    | Yes                   | OK      | [file](https://github.com/bbkbarbar/AVR-sample-codes/blob/master/ATmega8_read_ADC.c)
+|                              | ATtiny45   | Implemented in sample | ??      | [file](https://github.com/bbkbarbar/AVR-sample-codes/blob/master/ATtiny45_adc_NOT_TESTED.c)
+| Button read state            | ATmega8    | Implemented in sample | OK      | [file](https://github.com/bbkbarbar/AVR-sample-codes/blob/master/ATmega8_BTN_Pressed_basic.c)
+| LED display (7+1 in 4 digit) | ATmega8    | Yes                   | Not yet | [folder](https://github.com/bbkbarbar/AVR-sample-codes/tree/master/LED_display),  [.H](https://github.com/bbkbarbar/AVR-sample-codes/blob/master/LED_display/led_display_4x7.h),  [.C](https://github.com/bbkbarbar/AVR-sample-codes/blob/master/LED_display/led_display_4x7.c)
+| PWM rgb-led control          | ATmega8    | Yes                   | OK      | [file](https://github.com/bbkbarbar/AVR-sample-codes/blob/master/ATmega8_PWM_colorArray_controlled_by_buttons_on_portC_feedback_on_portD.c.c)
+| Servo control                | ATmega8    | Yes                   | OK      | [file](https://github.com/bbkbarbar/AVR-sample-codes/blob/master/ATmega8_servo_control.c)
