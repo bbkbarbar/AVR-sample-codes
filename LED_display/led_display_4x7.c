@@ -2,7 +2,7 @@
  *    Driver for 7+1 segment LED display @ 4 digits                   *
  *    Device: Custom, [4x7 base panel suggested]                      *
  *                                                                    *
- *    Tested with ...                                                 *
+ *    Tested with .............                                       *
  *      + ___ - OK?                                                   *
  *                                                                    *
  *                         Boor Andras - 2016                         *
@@ -84,12 +84,20 @@
 #define SET_VALUE(port, pin, value)	 	( ((value) > 0)?( port |= (1 << pin) ):(port &= ~(1 << pin)) )
 
 #define NONE				0
-#define ALL_SEGMENTS					0xFF
 
 #define NO_DOT 				0
 #define DOT_NEEDED			1
 
 
+
+#ifndef DIGIT_REVERSED
+	#define	DIGIT_ON 		1
+	#define DIGIT_OFF 		0
+#endif
+#ifdef DIGIT_REVERSED
+	#define DIGIT_ON 		0
+	#define DIGIT_OFF 		1
+#endif
 
 // Used to store states of segments in one variable
 //                       ABCDEFGH             
@@ -113,21 +121,21 @@ void wait(unsigned short val) {
 // Enable outputs for given segments
 void enableSegments(uint8_t value){ //e.g.: 0b01000010 //B+G
     
-    //                                                  A	
+    //                                                    A	
     SET_VALUE(PORT_OF_SEGM_A, PIN_OF_SEGM_A, (value & 0b10000000) );
-    //                                                   B	
+    //                                                     B	
     SET_VALUE(PORT_OF_SEGM_B, PIN_OF_SEGM_B, (value & 0b01000000) );
-    //                                                    C	
+    //                                                      C	
     SET_VALUE(PORT_OF_SEGM_C, PIN_OF_SEGM_C, (value & 0b00100000) );
-    //                                                     D
+    //                                                       D
     SET_VALUE(PORT_OF_SEGM_D, PIN_OF_SEGM_D, (value & 0b00010000) );
-    //                                                      E
+    //                                                        E
     SET_VALUE(PORT_OF_SEGM_E, PIN_OF_SEGM_E, (value & 0b00001000) );
-    //                                                       F
+    //                                                         F
     SET_VALUE(PORT_OF_SEGM_F, PIN_OF_SEGM_F, (value & 0b00000100) );
-    //                                                        G
+    //                                                          G
     SET_VALUE(PORT_OF_SEGM_G, PIN_OF_SEGM_G, (value & 0b00000010) );
-    //                                                         H
+    //                                                           H
     SET_VALUE(PORT_OF_SEGM_H, PIN_OF_SEGM_H, (value & 0b00000001) );
 
 }
@@ -137,10 +145,10 @@ void enableDigit(uint8_t digit){
 
 	if(digit <= USED_DIGITS ){
 
-		SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, 0 );
-		SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, 0 );
-		SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, 0 );
-		SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, 0 );
+		SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, DIGIT_OFF );
+		SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, DIGIT_OFF );
+		SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, DIGIT_OFF );
+		SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, DIGIT_OFF );
 
 		switch(digit) {
 
@@ -148,19 +156,19 @@ void enableDigit(uint8_t digit){
 				return;
 
 			case 1 :
-				SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, 1 );
+				SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, DIGIT_ON );
 				return;
 
 			case 2 :
-				SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, 1 );
+				SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, DIGIT_ON );
 				return;
 
 			case 3 :
-				SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, 1 );
+				SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, DIGIT_ON );
 				return;
 
 			case 4 :
-				SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, 1 );
+				SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, DIGIT_ON );
 				return;
 		}
 
@@ -168,10 +176,10 @@ void enableDigit(uint8_t digit){
 		/*
 		 * In other cases show the roblem with using all digit in same time.
 		 */
-		SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, 1 );
-		SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, 1 );
-		SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, 1 );
-		SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, 1 );
+		SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, DIGIT_ON );
+		SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, DIGIT_ON );
+		SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, DIGIT_ON );
+		SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, DIGIT_ON );
 	}
 
 }
@@ -235,6 +243,9 @@ uint8_t getSegmentValueForChar(char c){
 		case 'E' :
 			//       ABCDEFGH
 			return 0b10011110;
+		case 'A' :
+			//       ABCDEFGH
+			return 0b11101110;
 		case 'P' :
 			//       ABCDEFGH
 			return 0b11001110;
@@ -280,6 +291,7 @@ uint8_t* getSegmentPatternArray(uint16_t value){
 	uint8_t segmentPatterns[USED_DIGITS];
 	uint16_t tmp = 0;
 
+	PORTB &= ~(0b00000001);
 	if((value <= 9999) && (value >= 0)){
 
 		tmp = tmp/10; // 7
@@ -311,27 +323,26 @@ uint8_t* getSegmentPatternArray(uint16_t value){
 		segmentPatterns[3] = '_';
 	}
 
-	return &segmentPatterns;
+	return &segmentPatterns; /**/
 }
 
 
-void showSegmentPattern(uint8_t* segmentPatterns, uint8_t frameCount, uint8_t delayBetweenDigits){
+void showSegmentPattern(uint8_t segmentPattern, uint8_t digit, uint8_t delayBetweenDigits){
+	int i=0;
+	enableDigit(NONE);
+	enableSegments(segmentPattern);
+	enableDigit(digit);		
+	_delay_ms(delayBetweenDigits);
 
-	uint8_t frame;
+}
+
+
+void showSegmentPatterns(uint8_t* segmentPatterns, uint8_t delayBetweenDigits){
+
 	uint8_t currDigit = 0;
 	
-	for( frame = 0; frame < frameCount; frame++ ){
-		for( currDigit = 0; currDigit < USED_DIGITS; currDigit++ ){
-
-			if( segmentPatterns[currDigit] == 0){
-				continue;
-			}
-			enableDigit( NONE );
-			enableSegments( segmentPatterns[currDigit] );
-			enableDigit( currDigit + 1 );
-			wait(delayBetweenDigits);
-
-		}
+	for( currDigit ; currDigit < USED_DIGITS; currDigit++ ){
+		showSegmentPattern(segmentPatterns[USED_DIGITS-currDigit], currDigit, delayBetweenDigits );
 	}
 
 }
@@ -345,7 +356,7 @@ void showSegmentPattern(uint8_t* segmentPatterns, uint8_t frameCount, uint8_t de
 // for given frameCount
 // for given length of frames for digits
 // e.g.:                    5678
-void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter){
+void showIntValueWithDot(uint16_t value, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter){
 
 	uint16_t tmp = value;
 	uint16_t digitVal = 0;
@@ -359,6 +370,8 @@ void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetwee
 	*segmentPatterns = getSegmentPatternArray(value);
 
 
+	/*
+	@Temporary removed
 	#ifndef REPLACE_ZERO_FROM_BEGIN
 		if(REPLACE_ZERO_FROM_BEGIN > 0){
 
@@ -370,11 +383,14 @@ void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetwee
 
 		}
 	#endif
+	/**/
 
-
+	/*
+	@Temporary removed
 	if(needToShowDotAfterLastCharacter){
 		setDotAfter( &(segmentPatterns[USED_DIGITS-1]), DOT_NEEDED);
 	}
+	/**/
 
 
 	/*
@@ -382,65 +398,7 @@ void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetwee
 	 *  (if needed then 0-s from the begin replaced with ' ').
 	 *  Start to show..
 	 */
-	showSegmentPattern(segmentPatterns, frameCount, delayBetweenDigits);
-
-}
-
-
-/*
- *  This function made to findSegment correct configuration of segments.
- *  Examples: 
- *       findSegment('A', 0b1111);
- *       findSegment('.', 0b0100);
- */
-void showSegmentForTest(char c, uint8_t digits){
-		
-	enableSegments(NONE);
-
-	SET_VALUE(PORT_OF_DIGIT_1, PIN_OF_DIGIT_1, (digits & 0b0001) );
-	SET_VALUE(PORT_OF_DIGIT_2, PIN_OF_DIGIT_2, (digits & 0b0010) );
-	SET_VALUE(PORT_OF_DIGIT_3, PIN_OF_DIGIT_3, (digits & 0b0100) );
-	SET_VALUE(PORT_OF_DIGIT_4, PIN_OF_DIGIT_4, (digits & 0b1000) );
-
-
-	switch (c) {
-		case 'A' :
-		case 'a' :
-		    SET_VALUE(PORT_OF_SEGM_A, PIN_OF_SEGM_A, 1 );
-			break;
-		case 'B' :
-		case 'b' :
-		    SET_VALUE(PORT_OF_SEGM_B, PIN_OF_SEGM_B, 1 );
-			break;
-		case 'C' :
-		case 'c' :
-		    SET_VALUE(PORT_OF_SEGM_C, PIN_OF_SEGM_C, 1 );
-			break;
-		case 'D' :
-		case 'd' :
-		    SET_VALUE(PORT_OF_SEGM_D, PIN_OF_SEGM_D, 1 );
-			break;
-		case 'E' :
-		case 'e' :
-		    SET_VALUE(PORT_OF_SEGM_E, PIN_OF_SEGM_E, 1 );
-			break;
-		case 'F' :
-		case 'f' :
-		    SET_VALUE(PORT_OF_SEGM_F, PIN_OF_SEGM_F, 1 );
-			break;
-		case 'G' :
-		case 'g' :
-		    SET_VALUE(PORT_OF_SEGM_G, PIN_OF_SEGM_G, 1 );
-			break;
-		case 'H' :
-		case 'h' :
-		case '.' :
-		case ',' :
-		    SET_VALUE(PORT_OF_SEGM_H, PIN_OF_SEGM_H, 1 );
-			break;
-		default:
-			enableSegments(ALL_SEGMENTS);
-	}
+	showSegmentPatterns( &segmentPatterns, delayBetweenDigits);
 
 }
 
@@ -450,15 +408,15 @@ void showSegmentForTest(char c, uint8_t digits){
 // ======================================================================================================
 
 
-void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits){
-	showIntValueWithDot(value, frameCount, delayBetweenDigits, NO_DOT);
+void showIntValue(uint16_t value, uint8_t delayBetweenDigits){
+	showIntValueWithDot(value, delayBetweenDigits, NO_DOT);
 }
 
 
 void showFloatValue(float value, uint8_t frameCount, uint8_t delayBetweenDigits){
 	
 	if( value >= 1000.0f ){ // there is no place to show decimals
-		showIntValueWithDot((uint16_t)value, frameCount, delayBetweenDigits, DOT_NEEDED);
+		showIntValueWithDot((uint16_t)value, delayBetweenDigits, DOT_NEEDED);
 		return;
 	}
 

@@ -37,14 +37,14 @@
 	#define PORT_OF_SEGM_G			PORTD
 	#define PORT_OF_SEGM_H			PORTD
 	
-	#define PIN_OF_SEGM_A			PD0
-	#define PIN_OF_SEGM_B			PD1
-	#define PIN_OF_SEGM_C			PD2
+	#define PIN_OF_SEGM_A			PD6
+	#define PIN_OF_SEGM_B			PD7
+	#define PIN_OF_SEGM_C			PD4
 	#define PIN_OF_SEGM_D			PD3
-	#define PIN_OF_SEGM_E			PD4
-	#define PIN_OF_SEGM_F			PD5
-	#define PIN_OF_SEGM_G			PD6
-	#define PIN_OF_SEGM_H			PD7
+	#define PIN_OF_SEGM_E			PD2
+	#define PIN_OF_SEGM_F			PD1
+	#define PIN_OF_SEGM_G			PD0
+	#define PIN_OF_SEGM_H			PD5
 
 
 	#define PORT_OF_DIGIT_1			PORTB 
@@ -54,12 +54,12 @@
 	
 	#define PIN_OF_DIGIT_1			PB4
 	#define PIN_OF_DIGIT_2			PB5
-	#define PIN_OF_DIGIT_3			PB6
-	#define PIN_OF_DIGIT_4			PB7
+	#define PIN_OF_DIGIT_3			PB7
+	#define PIN_OF_DIGIT_4			PB3
 
  	#define PORTS_FOR_LED_DISPLAY_ARE_DEFINED
  	 
- #endif
+#endif
 
 
 // ======================================================================================================
@@ -104,7 +104,7 @@ uint8_t* getSegmentPatternArray(uint16_t value);
 /* 
  *  Shows segments according to the given segmentPattern array
  */
-void showSegmentPattern(uint8_t* segmentPatterns, uint8_t frameCount, uint8_t delayBetweenDigits);
+void showSegmentPatterns(uint8_t* segmentPatterns, uint8_t delayBetweenDigits);
 
 /*
  *  Show given numberic value in a 4 digits display
@@ -113,15 +113,8 @@ void showSegmentPattern(uint8_t* segmentPatterns, uint8_t frameCount, uint8_t de
  *  It can 
  */
 // e.g.:                    5678
-void showIntValueWithDot(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter);
+void showIntValueWithDot(uint16_t value, uint8_t delayBetweenDigits, uint8_t needToShowDotAfterLastCharacter);
 
-/*
- *  This function made to findSegment correct configuration of segments.
- *  Examples: 
- *       findSegment('A', 0b1111);
- *       findSegment('.', 0b0100);
- */
-void showSegmentForTest(char c, uint8_t digits);
 
 // ======================================================================================================
 // |                                         "Public" methods                                           |
@@ -133,7 +126,7 @@ void showSegmentForTest(char c, uint8_t digits);
  *  for given length of frames for digits
  */
 // e.g.:                    5678
-void showIntValue(uint16_t value, uint8_t frameCount, uint8_t delayBetweenDigits);
+void showIntValue(uint16_t value, uint8_t delayBetweenDigits);
 
 /*
  *  Show given numberic value in a 4 digits display
