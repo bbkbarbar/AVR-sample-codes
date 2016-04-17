@@ -73,7 +73,7 @@ int main(){
 	uint8_t btnPressedPreviously = 0;
 		
 	char c[] = {  
-			'0', 
+			'8', 
 			'7', 
 			'1', 
 			'3'
@@ -97,23 +97,15 @@ int main(){
 		enableDigit(3);
 		_delay_ms(20);
 		
-	
-		/*
-		enableSegments(getSegmentValueForChar(c[1]));
-		enableDigit(3);
-		_delay_ms(10);
 		enableDigit(0);
-
 		enableSegments(getSegmentValueForChar(c[2]));
 		enableDigit(2);
-		_delay_ms(10);
-		enableDigit(0);
+		_delay_ms(20);
 
+		enableDigit(0);
 		enableSegments(getSegmentValueForChar(c[3]));
 		enableDigit(1);
-		_delay_ms(10);
-		enableDigit(0);
-		/**/
+		_delay_ms(20);
 
 	/*
 		if(btnPressedPreviously == 0){
